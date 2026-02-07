@@ -1,12 +1,13 @@
+import os
 import uuid
 from datetime import datetime
 
 import boto3
 from botocore.exceptions import ClientError
 
-DYNAMODB_ENDPOINT = "http://localhost:4566"
-REGION_NAME = "eu-central-1"
-TABLE_NAME = "Votes"
+DYNAMODB_ENDPOINT = os.getenv("DYNAMODB_ENDPOINT", "http://localhost:4566")
+REGION_NAME = os.getenv("REGION_NAME", "eu-central-1")
+TABLE_NAME = os.getenv("TABLE_NAME", "Votes")
 
 
 def get_dynamodb_resource():

@@ -10,3 +10,16 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+
+  backend:
+    container_name: voting_backend
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DYNAMODB_ENDPOINT=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=eu-central-1
+    depends_on:
+      - localstack
