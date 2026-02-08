@@ -1,4 +1,25 @@
 services:
+  traefik:
+    image: traefik:v2.11
+    container_name: traefik_router
+    security_opt:
+      - label:disable
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--log.level=DEBUG"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - voting-network
+    restart: unless-stopped
+
   localstack:
     container_name: localstack_main
     image: localstack/localstack:latest
@@ -6,20 +27,34 @@ services:
       - "4566:4566"
     environment:
       - SERVICES=dynamodb
-      - DEBUG=0
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - voting-network
+    restart: unless-stopped
 
   backend:
     container_name: voting_backend
     build: ./backend
-    ports:
-      - "8000:8000"
     environment:
       - DYNAMODB_ENDPOINT=http://localstack:4566
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_DEFAULT_REGION=eu-central-1
+      - REGION_NAME=eu-central-1
+      - TABLE_NAME=Votes
     depends_on:
       - localstack
+    networks:
+      - voting-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.voting-app.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.voting-app.entrypoints=web"
+      - "traefik.http.services.voting-service.loadbalancer.server.port=8000"
+    restart: unless-stopped
+
+networks:
+  voting-network:
+    driver: bridge
