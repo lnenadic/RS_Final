@@ -1,3 +1,4 @@
+import socket
 from collections import Counter
 from typing import List
 
@@ -19,11 +20,16 @@ async def vote(vote: VoteRequest):
     """Zaprima novi glas."""
     try:
         result = save_vote_to_db(vote.option.value)
+
+        container_id = socket.gethostname()
+
         return {
             "message": "Glas uspješno zaprimljen!",
             "option": vote.option,
+            "processed_by": container_id,
             "data": result,
         }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -33,11 +39,8 @@ async def get_results():
     """Dohvaća sve glasove po kandidatu."""
     try:
         raw_votes = get_all_votes()
-
         vote_options = [v["option"] for v in raw_votes]
-
         results = Counter(vote_options)
-
         return results
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

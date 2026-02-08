@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High Scale Voting System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="main-container">
+        <header>
+            <h1>🗳️ High Scale Voting System</h1>
+            <p>Odaberite svog favorita (Distribuirani Sustav)</p>
+        </header>
+
+        <div class="candidates-grid">
+            <div class="card" onclick="castVote('Tim A')">
+                <div class="emoji">🚀</div>
+                <h2>TIM A</h2>
+                <p>Inovatori</p>
+                <div class="overlay">GLASAJ</div>
+            </div>
+
+            <div class="card" onclick="castVote('Tim B')">
+                <div class="emoji">🛠️</div>
+                <h2>TIM B</h2>
+                <p>Inžinjeri</p>
+                <div class="overlay">GLASAJ</div>
+            </div>
+
+            <div class="card" onclick="castVote('Tim C')">
+                <div class="emoji">💻</div>
+                <h2>TIM C</h2>
+                <p>Developeri</p>
+                <div class="overlay">GLASAJ</div>
+            </div>
+        </div>
+
+        <div id="status-message"></div>
+
+        <div class="results-container">
+            <h3>📊 Rezultati uživo</h3>
+            <div id="results-list">
+                Učitavanje rezultata...
+            </div>
+            <div class="total-votes">Ukupno glasova: <span id="total-count">0</span></div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
