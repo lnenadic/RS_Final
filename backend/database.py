@@ -5,19 +5,22 @@ from datetime import datetime
 import boto3
 from botocore.exceptions import ClientError
 
-DYNAMODB_ENDPOINT = os.getenv("DYNAMODB_ENDPOINT", "http://localhost:4566")
+DYNAMODB_ENDPOINT = os.getenv("DYNAMODB_ENDPOINT")
 REGION_NAME = os.getenv("REGION_NAME", "eu-central-1")
 TABLE_NAME = os.getenv("TABLE_NAME", "Votes")
 
 
 def get_dynamodb_resource():
-    return boto3.resource(
-        "dynamodb",
-        endpoint_url=DYNAMODB_ENDPOINT,
-        region_name=REGION_NAME,
-        aws_access_key_id="test",
-        aws_secret_access_key="test",
-    )
+    if DYNAMODB_ENDPOINT:
+        return boto3.resource(
+            "dynamodb",
+            endpoint_url=DYNAMODB_ENDPOINT,
+            region_name=REGION_NAME,
+            aws_access_key_id="test",
+            aws_secret_access_key="test",
+        )
+    else:
+        return boto3.resource("dynamodb", region_name=REGION_NAME)
 
 
 def create_table_if_not_exists():
@@ -32,8 +35,9 @@ def create_table_if_not_exists():
         print(f"Tablica '{TABLE_NAME}' uspješno kreirana u regiji {REGION_NAME}.")
     except ClientError as e:
         if e.response["Error"]["Code"] == "ResourceInUseException":
-            print(f"Tablica '{TABLE_NAME}' već postoji.")
+            print(f"Tablica '{TABLE_NAME}' već postoji. Nastavljam s radom.")
         else:
+            print(f"Greška pri spajanju na bazu: {e}")
             raise e
 
 

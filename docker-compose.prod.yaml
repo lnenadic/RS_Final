@@ -16,10 +16,11 @@ services:
     build: ./backend
     environment:
       - TABLE_NAME=Votes
-      - AWS_DEFAULT_REGION=eu-central-1
+      - REGION_NAME=eu-central-1
+      - DYNAMODB_ENDPOINT=
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=PathPrefix(`/vote`) || PathPrefix(`/results`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`)"
+      - "traefik.http.routers.backend.rule=Host(`rs-final.duckdns.org`) && (PathPrefix(`/vote`) || PathPrefix(`/results`) || PathPrefix(`/docs`) || PathPrefix(`/openapi.json`))"
       - "traefik.http.routers.backend.entrypoints=web"
     restart: always
 
@@ -27,6 +28,6 @@ services:
     build: ./frontend
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.frontend.rule=Host(`rs-final.duckdns.org`)"
       - "traefik.http.routers.frontend.entrypoints=web"
     restart: always
